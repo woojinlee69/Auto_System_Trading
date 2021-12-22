@@ -7,7 +7,7 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-
+from AutoConnect import Auto_Login
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
@@ -56,12 +56,12 @@ class Ui_Dialog(object):
         self.retranslateUi(Dialog)
         self.buttonBox.accepted.connect(Dialog.accept)
         self.buttonBox.rejected.connect(Dialog.reject)
-        self.pushButton.clicked.connect(Dialog.accept)
+        self.pushButton.clicked.connect(Auto_Login)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
-        Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
+        Dialog.setWindowTitle(_translate("Dialog", "LoginPage"))
         self.label_4.setText(_translate("Dialog", "대신증권 API 접속을 위해 아래 정보를 입력해 주시기 바랍니다."))
         self.label.setText(_translate("Dialog", "아이디"))
         self.label_2.setText(_translate("Dialog", "비밀번호"))
