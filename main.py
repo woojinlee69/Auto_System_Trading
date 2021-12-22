@@ -13,7 +13,7 @@ from PyQt5.QtGui import QBrush, QColor
 from PyQt5.QtWidgets import *
 
 from AutoConnect import CustomDialog,Auto_Login
-from myChart import MyPieChart
+from accChart import MyPieChart
 from candleChart import MyWindow
 
 import handler
@@ -97,7 +97,8 @@ class Form(QMainWindow, form_class):
         self.login_Creon.setAutoDefault(True)  # enable Enter key
         self.login_Creon.clicked.connect(self.loginCreon)
         self.pushButton_3.clicked.connect(self.logout)
-        self.pushButton.clicked.connect(self.loginCreon)
+        self.pushButton.clicked.connect(self.button_clicked) #잔고조회 페이지의 잔고조회 버튼
+        self.pushButton_7.clicked.connect(self.button_clicked) #메인 페이지의 잔고조회 버튼
         self.pieButton.clicked.connect(self.showChart)
         self.pushButton_4.clicked.connect(self.getAllStgList_clicked)
         self.pushButton_5.clicked.connect(self.getStgList_clicked)
@@ -341,17 +342,21 @@ class Form(QMainWindow, form_class):
 
         # 테이블 초기화
         self.tableWidget_2.setRowCount(0)
-
+        self.tableWidget_4.setRowCount(0)
 
         if TEST == True:
             self.tableWidget_2.setRowCount(3)
+            self.tableWidget_4.setRowCount(3)
             self.tableWidget.setRowCount(1)
+
         else:
             self.tableWidget_2.setRowCount(numbers)
+            self.tableWidget_4.setRowCount(numbers)
             self.tableWidget.setRowCount(1)
 
 
         i = 0;
+        k = 0;
         for key, value in acc_balance1.items():
 
             # 종목명
@@ -428,7 +433,7 @@ class Form(QMainWindow, form_class):
             elif getpratio < 0:
                 pratio_item.setForeground(QBrush(QColor(0, 0, 255)))
 
-            if i == 0:
+            if i == 0 or k == 0:
                 pre_amount = value['예수금']
 
 
@@ -449,10 +454,28 @@ class Form(QMainWindow, form_class):
 
             i = i + 1
 
+            self.tableWidget_4.setSortingEnabled(False)
+
+            self.tableWidget_4.setItem(k, 0, code_item)
+            self.tableWidget_4.setItem(k, 1, name_item)
+            self.tableWidget_4.setItem(k, 2, curprice_item)
+            self.tableWidget_4.setItem(k, 3, changes_item)
+            self.tableWidget_4.setItem(k, 4, buyunitprice_item)
+            self.tableWidget_4.setItem(k, 5, hold_item)
+            self.tableWidget_4.setItem(k, 6, buyprice_item)
+            self.tableWidget_4.setItem(k, 7, amount_item)
+            self.tableWidget_4.setItem(k, 8, pratio_item)
+
+            k = k + 1
         self.tableWidget_2.resizeRowsToContents()
 
         self.tableWidget_2.setSortingEnabled(True)
         self.tableWidget_2.horizontalHeader().sortIndicatorChanged.connect(self.tableWidget_2.resizeRowsToContents)
+
+        self.tableWidget_4.resizeRowsToContents()
+
+        self.tableWidget_4.setSortingEnabled(True)
+        self.tableWidget_4.horizontalHeader().sortIndicatorChanged.connect(self.tableWidget_4.resizeRowsToContents)
 
         self.progress.hide()
 
@@ -759,8 +782,8 @@ class Form(QMainWindow, form_class):
         menu.addSeparator()
         info = menu.addMenu("주식 정보")
 
-        info1 = info.addAction("네이버 금융")
-        info2 = info.addAction("기타 2")
+        info1 = info.addAction("네이버 증권")
+        info2 = info.addAction("네이버 뉴스/공시")
 
         action = menu.exec_(self.tableWidget_2.viewport().mapToGlobal(position))
         print("action : ", action)
@@ -772,11 +795,11 @@ class Form(QMainWindow, form_class):
 
         elif action == info1:
             url = 'https://finance.naver.com/item/main.nhn?code=' + code_text[1:]
-            # url = 'https://finance.naver.com/item/main.nhn?code=263720'
             webbrowser.open(url)
 
         elif action == info2:
-            QMessageBox.about(self, "Message", "info2")
+            url = 'https://m.stock.naver.com/index.html#/domestic/stock/' + code_text[1:] + '/notice'
+            webbrowser.open(url)
 
     def tableWidget_doubleClicked(self):
         row = self.tableWidget_3.currentIndex().row()
